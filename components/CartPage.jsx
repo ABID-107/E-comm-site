@@ -4,7 +4,14 @@ import Navbar from "/components/Navbar";
 import Footer from "/components/Footer";
 
 export default function CartPage() {
-  const { cartItems, cartCount, subtotal, updateQuantity, removeFromCart, clearCart } = useCart();
+  const {
+    cartItems,
+    cartCount,
+    subtotal,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+  } = useCart();
 
   const tax = subtotal * 0.1;
   const grandTotal = subtotal + tax;
@@ -14,12 +21,18 @@ export default function CartPage() {
       <div className="min-h-screen bg-neutral-950 text-white">
         <Navbar searchQuery="" onSearchChange={() => {}} products={[]} />
         <div className="max-w-7xl mx-auto px-6 lg:px-16 py-24 text-center">
-          <div className="text-6xl mb-6" aria-hidden="true">🛒</div>
+          <div className="text-6xl mb-6" aria-hidden="true">
+            🛒
+          </div>
           <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
           <p className="text-white/50 mb-8 max-w-md mx-auto">
-            Looks like you haven't added any products yet. Start shopping to fill your cart!
+            Looks like you haven't added any products yet. Start shopping to
+            fill your cart!
           </p>
-          <Link to="/hero" className="inline-flex px-8 py-3 bg-indigo-500 hover:bg-indigo-400 rounded-xl font-semibold transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950">
+          <Link
+            to="/hero"
+            className="inline-flex px-8 py-3 bg-indigo-500 hover:bg-indigo-400 rounded-xl font-semibold transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+          >
             Continue Shopping
           </Link>
         </div>
@@ -28,12 +41,14 @@ export default function CartPage() {
     );
   }
 
-return (
+  return (
     <div className="min-h-screen bg-neutral-950 text-white">
       <Navbar searchQuery="" onSearchChange={() => {}} products={[]} />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-16 py-12">
-        <h1 className="text-3xl lg:text-4xl font-bold mb-8">Shopping Cart ({cartCount} items)</h1>
+        <h1 className="text-3xl lg:text-4xl font-bold mb-8">
+          Shopping Cart ({cartCount} items)
+        </h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -41,29 +56,57 @@ return (
             {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="flex gap-4 bg-neutral-900 border border-white/10 rounded-2xl p-4 hover:border-white/20 transition"
+                className="grid grid-cols-1 items-center gap-4 bg-neutral-900 border border-white/10 rounded-2xl p-4 hover:border-white/20 transition"
               >
-                <Link to={`/product/${item.id}`} className="shrink-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-xl">
+                {/* ============ IMAGE ============
+          Mobile: full-width square image at the top (per wireframe).
+          sm+ : reverts to the original fixed 24x24 thumbnail. */}
+                <Link
+                  to={`/product/${item.id}`}
+                  className="block shrink-0 w-full sm:w-24 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-xl"
+                >
                   <img
                     src={item.thumbnail}
                     alt={`${item.title} - ${item.category} product`}
-                    className="w-24 h-24 object-cover rounded-xl"
+                    className="w-full aspect-square sm:w-24 sm:h-24 sm:aspect-auto object-cover rounded-xl"
                     loading="lazy"
                   />
                 </Link>
 
                 <div className="flex-1 min-w-0">
-                  <Link to={`/product/${item.id}`} className="block focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg">
+                  <Link
+                    to={`/product/${item.id}`}
+                    className="block focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg"
+                  >
                     <h3 className="font-semibold text-lg truncate hover:text-indigo-400 transition">
                       {item.title}
                     </h3>
                   </Link>
-                  <p className="text-sm text-white/50 mt-1 capitalize">{item.category}</p>
-                  <p className="text-lg font-bold text-white mt-2">${item.price}</p>
+
+                  {/* ============ CATEGORY + PRICE ============
+            Mobile: side-by-side row (per wireframe).
+            sm+ : reverts to the original stacked column. */}
+                  <div className="flex flex-row items-center justify-between gap-3 mt-1 sm:flex-col sm:items-start sm:justify-start sm:gap-0 sm:mt-0">
+                    <p className="text-sm text-white/50 capitalize sm:mt-1">
+                      {item.category}
+                    </p>
+                    <p className="text-lg font-bold text-white sm:mt-2">
+                      ${item.price}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-4">
-                  <div className="flex items-center border border-white/10 rounded-xl overflow-hidden" role="group" aria-label={`Quantity for ${item.title}`}>
+                {/* ============ QUANTITY + REMOVE + LINE TOTAL ============
+          Mobile: one row — stepper, circular icon-only remove button, price
+          (per wireframe).
+          sm+ : reverts to the original right-aligned vertical stack with
+          the full "Remove" text link. */}
+                <div className="flex flex-row items-center justify-between gap-3 sm:flex-col sm:items-end sm:gap-4">
+                  <div
+                    className="flex items-center border border-white/10 rounded-xl overflow-hidden"
+                    role="group"
+                    aria-label={`Quantity for ${item.title}`}
+                  >
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
                       className="px-3 py-2 hover:bg-white/5 transition text-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
@@ -73,7 +116,10 @@ return (
                     >
                       −
                     </button>
-                    <span className="px-4 py-2 border-x border-white/10 text-lg font-medium min-w-12.5 text-center" aria-live="polite">
+                    <span
+                      className="px-4 py-2 border-x border-white/10 text-lg font-medium min-w-12.5 text-center"
+                      aria-live="polite"
+                    >
                       {item.quantity}
                     </span>
                     <button
@@ -89,17 +135,40 @@ return (
 
                   <button
                     onClick={() => removeFromCart(item.id)}
-                    className="text-red-400 hover:text-red-300 text-sm font-medium flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg"
+                    className="flex items-center justify-center gap-1
+            w-9 h-9 rounded-full border border-white/10
+            sm:w-auto sm:h-auto sm:rounded-lg sm:border-0
+            text-red-400 hover:text-red-300 hover:bg-white/5 sm:hover:bg-transparent
+            text-sm font-medium transition
+            focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
                     aria-label={`Remove ${item.title} from cart`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
-                    Remove
+                    {/* "Remove" label hidden on mobile — icon-only circular button
+              per the wireframe's "remove icon" callout */}
+                    <span className="hidden sm:inline">Remove</span>
                   </button>
 
-                  <div className="text-right" aria-label={`Line total for ${item.title}`}>
-                    <p className="font-semibold text-lg">${(item.price * item.quantity).toFixed(2)}</p>
+                  <div
+                    className="text-right"
+                    aria-label={`Line total for ${item.title}`}
+                  >
+                    <p className="font-semibold text-lg">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -112,7 +181,10 @@ return (
               >
                 Clear Cart
               </button>
-              <Link to="/hero" className="text-indigo-400 hover:text-indigo-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg px-2 py-1">
+              <Link
+                to="/hero"
+                className="text-indigo-400 hover:text-indigo-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg px-2 py-1"
+              >
                 ← Continue Shopping
               </Link>
             </div>
@@ -163,3 +235,100 @@ return (
     </div>
   );
 }
+{/* <div
+                key={item.id}
+                className="grid grid-cols-1 items-center gap-4 bg-neutral-900 border border-white/10 rounded-2xl p-4 hover:border-white/20 transition"
+              >
+                <Link
+                  to={`/product/${item.id}`}
+                  className="shrink-0 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-xl"
+                >
+                  <img
+                    src={item.thumbnail}
+                    alt={`${item.title} - ${item.category} product`}
+                    className="w-24 h-24 object-cover rounded-xl"
+                    loading="lazy"
+                  />
+                </Link>
+
+                <div className="flex-1 min-w-0">
+                  <Link
+                    to={`/product/${item.id}`}
+                    className="block focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg"
+                  >
+                    <h3 className="font-semibold text-lg truncate hover:text-indigo-400 transition">
+                      {item.title}
+                    </h3>
+                  </Link>
+                  <p className="text-sm text-white/50 mt-1 capitalize">
+                    {item.category}
+                  </p>
+                  <p className="text-lg font-bold text-white mt-2">
+                    ${item.price}
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-end gap-4">
+                  <div
+                    className="flex items-center border border-white/10 rounded-xl overflow-hidden"
+                    role="group"
+                    aria-label={`Quantity for ${item.title}`}
+                  >
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      className="px-3 py-2 hover:bg-white/5 transition text-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+                      disabled={item.quantity <= 1}
+                      aria-label={`Decrease quantity of ${item.title}`}
+                      aria-disabled={item.quantity <= 1}
+                    >
+                      −
+                    </button>
+                    <span
+                      className="px-4 py-2 border-x border-white/10 text-lg font-medium min-w-12.5 text-center"
+                      aria-live="polite"
+                    >
+                      {item.quantity}
+                    </span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      className="px-3 py-2 hover:bg-white/5 transition text-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+                      disabled={item.quantity >= item.stock}
+                      aria-label={`Increase quantity of ${item.title}`}
+                      aria-disabled={item.quantity >= item.stock}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="text-red-400 hover:text-red-300 text-sm font-medium flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg"
+                    aria-label={`Remove ${item.title} from cart`}
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                    Remove
+                  </button>
+
+                  <div
+                    className="text-right"
+                    aria-label={`Line total for ${item.title}`}
+                  >
+                    <p className="font-semibold text-lg">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div> */}
