@@ -5,6 +5,7 @@ import HeroSection from "/components/HeroSection";
 import ProductDetail from "/components/ProductDetail";
 import CartPage from "/components/CartPage";
 import CheckoutPage from "/components/CheckoutPage";
+import OrderConfirmation from "/components/OrderConfirmation";
 import WishlistPage from "/components/WishlistPage";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/wishlist" element={<WishlistPage />} />
       </Routes>
     </>
