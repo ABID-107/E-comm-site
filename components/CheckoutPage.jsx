@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "/context/useCart";
 import Navbar from "/components/Navbar";
@@ -36,51 +36,28 @@ export default function CheckoutPage() {
     estimatedDelivery: "",
   });
   const [placedItems, setPlacedItems] = useState([]);
+  const dialogRef = useRef(null);
 
   const tax = subtotal * 0.1;
   const grandTotal = subtotal + tax;
 
-  if (cartItems.length === 0 && step === "success") {
+  useEffect(() => {
+    if (step === "success" && dialogRef.current) {
+      dialogRef.current.showModal();
+    }
+  }, [step, dialogRef]);
+
+  if (step === "success") {
     return (
       <div className="min-h-screen bg-neutral-950 text-white">
-        <div className="min-h-screen bg-neutral-950 text-white">
-          <Navbar searchQuery="" onSearchChange={() => {}} products={[]} />
-          <OrderConfirmation
-            orderId={orderDetails.orderId}
-            estimatedDelivery={orderDetails.estimatedDelivery}
-            backToPath="/hero"
-          >
-            <div className="bg-neutral-950 border border-white/10 rounded-xl p-5 mb-8 text-left">
-              <p className="font-semibold mb-2">Order Summary</p>
-              <div className="space-y-2 text-sm">
-                {placedItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex justify-between text-white/70"
-                  >
-                    <span>
-                      {item.title} × {item.quantity}
-                    </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
-                  </div>
-                ))}
-                <div className="border-t border-white/10 pt-2 flex justify-between font-semibold">
-                  <span>Total</span>
-                  <span>${grandTotal.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          </OrderConfirmation>
-          <Footer />
-        </div>
         <Navbar searchQuery="" onSearchChange={() => {}} products={[]} />
         <div className="max-w-7xl mx-auto px-6 lg:px-16 py-24 text-center">
           <div className="text-6xl mb-6" aria-hidden="true">
-            🛒
+            ✅
           </div>
-          <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
+          <h1 className="text-3xl font-bold mb-4">Order Placed Successfully!</h1>
           <p className="text-white/50 mb-8 max-w-md mx-auto">
-            Add some products to your cart before proceeding to checkout.
+            Your order has been confirmed. You will receive a confirmation email shortly.
           </p>
           <Link
             to="/hero"
@@ -90,6 +67,44 @@ export default function CheckoutPage() {
           </Link>
         </div>
         <Footer />
+        {/* Order Confirmation Dialog */}
+        <dialog
+          ref={dialogRef}
+          id="my_modal_2"
+          className="modal"
+        >
+          <div className="min-h-screen bg-neutral-950 text-white">
+            <OrderConfirmation
+              orderId={orderDetails.orderId}
+              estimatedDelivery={orderDetails.estimatedDelivery}
+              backToPath="/hero"
+            >
+              <div className="bg-neutral-950 border border-white/10 rounded-xl p-5 mb-8 text-left">
+                <p className="font-semibold mb-2">Order Summary</p>
+                <div className="space-y-2 text-sm">
+                  {placedItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex justify-between text-white/70"
+                    >
+                      <span>
+                        {item.title} × {item.quantity}
+                      </span>
+                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                  <div className="border-t border-white/10 pt-2 flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>${grandTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </OrderConfirmation>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
       </div>
     );
   }
