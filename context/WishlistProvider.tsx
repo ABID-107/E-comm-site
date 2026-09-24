@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { WishlistContext } from "./WishlistContext";
+import { WishlistContextValue } from "./WishlistContextValue";
+import { Product } from "../types";
 
-export function WishlistProvider({ children }) {
-  const [wishlistItems, setWishlistItems] = useState(() => {
+export function WishlistProvider({ children }: { children: React.ReactNode }) {
+  const [wishlistItems, setWishlistItems] = useState<Product[]>(() => {
     try {
       const stored = localStorage.getItem("elevora-wishlist");
       return stored ? JSON.parse(stored) : [];
@@ -15,18 +17,18 @@ export function WishlistProvider({ children }) {
     localStorage.setItem("elevora-wishlist", JSON.stringify(wishlistItems));
   }, [wishlistItems]);
 
-  const addToWishlist = useCallback((product) => {
+  const addToWishlist = useCallback((product: Product) => {
     setWishlistItems((prev) => {
       if (prev.some((item) => item.id === product.id)) return prev;
       return [...prev, product];
     });
   }, []);
 
-  const removeFromWishlist = useCallback((productId) => {
+  const removeFromWishlist = useCallback((productId: number) => {
     setWishlistItems((prev) => prev.filter((item) => item.id !== productId));
   }, []);
 
-  const toggleWishlist = useCallback((product) => {
+  const toggleWishlist = useCallback((product: Product) => {
     setWishlistItems((prev) => {
       if (prev.some((item) => item.id === product.id)) {
         return prev.filter((item) => item.id !== product.id);
@@ -35,7 +37,7 @@ export function WishlistProvider({ children }) {
     });
   }, []);
 
-  const isInWishlist = useCallback((productId) => {
+  const isInWishlist = useCallback((productId: number) => {
     return wishlistItems.some((item) => item.id === productId);
   }, [wishlistItems]);
 
@@ -45,18 +47,18 @@ export function WishlistProvider({ children }) {
 
   const wishlistCount = wishlistItems.length;
 
+  const value: WishlistContextValue = {
+    wishlistItems,
+    wishlistCount,
+    addToWishlist,
+    removeFromWishlist,
+    toggleWishlist,
+    isInWishlist,
+    clearWishlist,
+  };
+
   return (
-    <WishlistContext.Provider
-      value={{
-        wishlistItems,
-        wishlistCount,
-        addToWishlist,
-        removeFromWishlist,
-        toggleWishlist,
-        isInWishlist,
-        clearWishlist,
-      }}
-    >
+    <WishlistContext.Provider value={value}>
       {children}
     </WishlistContext.Provider>
   );

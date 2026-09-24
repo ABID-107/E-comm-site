@@ -1,386 +1,28 @@
-// import { useState, useRef, useEffect } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { useCart } from "/context/useCart";
-// import { useWishlist } from "/context/useWishlist";
-
-// export default function Navbar({ searchQuery, onSearchChange, products = [] }) {
-//   const [showSuggestions, setShowSuggestions] = useState(false);
-//   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-//   const [showMobileMenu, setShowMobileMenu] = useState(false);
-//   const inputRef = useRef(null);
-//   const dropdownRef = useRef(null);
-//   const mobileMenuRef = useRef(null);
-//   const navigate = useNavigate();
-//   const { cartCount } = useCart();
-//   const { wishlistCount } = useWishlist();
-
-//   useEffect(() => {
-//     function handleClickOutside(event) {
-//       if (
-//         mobileMenuRef.current &&
-//         !mobileMenuRef.current.contains(event.target) &&
-//         event.target !== document.querySelector('[aria-controls="mobile-menu"]')
-//       ) {
-//         setShowMobileMenu(false);
-//       }
-//     }
-//     document.addEventListener("mousedown", handleClickOutside);
-//     return () => document.removeEventListener("mousedown", handleClickOutside);
-//   }, []);
-
-//   const filteredProducts = products
-//     .filter(
-//       (p) =>
-//         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//         p.category.toLowerCase().includes(searchQuery.toLowerCase()),
-//     )
-//     .slice(0, 5);
-
-//   useEffect(() => {
-//     function handleClickOutside(event) {
-//       if (
-//         dropdownRef.current &&
-//         !dropdownRef.current.contains(event.target) &&
-//         inputRef.current &&
-//         !inputRef.current.contains(event.target)
-//       ) {
-//         setShowSuggestions(false);
-//         setHighlightedIndex(-1);
-//       }
-//     }
-//     document.addEventListener("mousedown", handleClickOutside);
-//     return () => document.removeEventListener("mousedown", handleClickOutside);
-//   }, []);
-
-//   const handleKeyDown = (e) => {
-//     if (!showSuggestions || filteredProducts.length === 0) {
-//       if (e.key === "Escape") {
-//         setShowSuggestions(false);
-//         setHighlightedIndex(-1);
-//       }
-//       return;
-//     }
-
-//     if (e.key === "ArrowDown") {
-//       e.preventDefault();
-//       setHighlightedIndex((prev) =>
-//         prev < filteredProducts.length - 1 ? prev + 1 : 0,
-//       );
-//     } else if (e.key === "ArrowUp") {
-//       e.preventDefault();
-//       setHighlightedIndex((prev) =>
-//         prev > 0 ? prev - 1 : filteredProducts.length - 1,
-//       );
-//     } else if (e.key === "Enter") {
-//       e.preventDefault();
-//       if (highlightedIndex >= 0) {
-//         const selected = filteredProducts[highlightedIndex];
-//         navigate(`/product/${selected.id}`);
-//       }
-//       setShowSuggestions(false);
-//       setHighlightedIndex(-1);
-//     } else if (e.key === "Escape") {
-//       setShowSuggestions(false);
-//       setHighlightedIndex(-1);
-//       inputRef.current?.focus();
-//     } else if (e.key === "Tab") {
-//       setShowSuggestions(false);
-//       setHighlightedIndex(-1);
-//     }
-//   };
-
-//   const handleInputFocus = () => {
-//     if (searchQuery.trim() && filteredProducts.length > 0) {
-//       setShowSuggestions(true);
-//     }
-//   };
-
-//   const handleInputChange = (e) => {
-//     const value = e.target.value;
-//     onSearchChange(value);
-//     if (value.trim() && filteredProducts.length > 0) {
-//       setShowSuggestions(true);
-//       setHighlightedIndex(-1);
-//     } else {
-//       setShowSuggestions(false);
-//       setHighlightedIndex(-1);
-//     }
-//   };
-
-//   const selectSuggestion = (product) => {
-//     navigate(`/product/${product.id}`);
-//     setShowSuggestions(false);
-//     setHighlightedIndex(-1);
-//     inputRef.current?.focus();
-//   };
-
-//   return (
-//     <div>
-//       {/* <!-- ================= NAVBAR ================= --> */}
-//       <nav className="w-full border-b border-white/10 bg-neutral-950/90 backdrop-blur-xl sticky top-0 z-50">
-//         <div className="max-w-7xl mx-auto px-6 lg:px-16 h-20 flex items-center justify-between">
-//           {/* Mobile Menu Panel */}
-//           {showMobileMenu && (
-//             <div
-//               ref={mobileMenuRef}
-//               id="mobile-menu"
-//               className="fixed inset-0 z-40 bg-neutral-950/95 backdrop-blur-xl flex flex-col pt-20 md:hidden animate-in slide-in-from-top duration-200"
-//               role="navigation"
-//               aria-label="Mobile navigation"
-//             >
-//               <div className="flex-1 overflow-y-auto px-6 py-8 space-y-6">
-//                 <nav className="space-y-4" aria-label="Main navigation">
-//                   <Link
-//                     to="/"
-//                     className="block text-xl font-medium text-white hover:text-indigo-400 transition py-3 border-b border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded"
-//                     onClick={() => setShowMobileMenu(false)}
-//                   >
-//                     Home
-//                   </Link>
-//                   <Link
-//                     to="/hero"
-//                     className="block text-xl font-medium text-white/80 hover:text-white transition py-3 border-b border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded"
-//                     onClick={() => setShowMobileMenu(false)}
-//                   >
-//                     Shop
-//                   </Link>
-//                   <Link
-//                     to="/collections"
-//                     className="block text-xl font-medium text-white/80 hover:text-white transition py-3 border-b border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded"
-//                     onClick={() => setShowMobileMenu(false)}
-//                   >
-//                     Collections
-//                   </Link>
-//                   <Link
-//                     to="/new-arrivals"
-//                     className="block text-xl font-medium text-white/80 hover:text-white transition py-3 border-b border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded"
-//                     onClick={() => setShowMobileMenu(false)}
-//                   >
-//                     New Arrivals
-//                   </Link>
-//                   <Link
-//                     to="/deals"
-//                     className="block text-xl font-medium text-white/80 hover:text-white transition py-3 border-b border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded"
-//                     onClick={() => setShowMobileMenu(false)}
-//                   >
-//                     Deals
-//                   </Link>
-//                 </nav>
-
-//                 <div className="pt-6 border-t border-white/10 space-y-4">
-//                   <Link
-//                     to="/wishlist"
-//                     className="flex items-center gap-4 text-xl font-medium text-white/80 hover:text-white transition py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded"
-//                     onClick={() => setShowMobileMenu(false)}
-//                   >
-//                     ♡ Wishlist
-//                     {wishlistCount > 0 && (
-//                       <span className="w-6 h-6 rounded-full bg-red-500 text-[11px] flex items-center justify-center" aria-hidden="true">
-//                         {wishlistCount > 99 ? "99+" : wishlistCount}
-//                       </span>
-//                     )}
-//                   </Link>
-//                   <Link
-//                     to="/cart"
-//                     className="flex items-center gap-4 text-xl font-medium text-white/80 hover:text-white transition py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded"
-//                     onClick={() => setShowMobileMenu(false)}
-//                   >
-//                     🛒 Cart
-//                     {cartCount > 0 && (
-//                       <span className="w-6 h-6 rounded-full bg-indigo-500 text-[11px] flex items-center justify-center" aria-hidden="true">
-//                         {cartCount > 99 ? "99+" : cartCount}
-//                       </span>
-//                     )}
-//                   </Link>
-//                   <button className="w-full text-left px-4 py-3 text-xl font-medium text-white bg-white/5 rounded-xl hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950">
-//                     Account
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           )}
-//           {/* <!-- Logo --> */}
-//           <Link to="/" className="flex items-center gap-3">
-//             <div className="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center font-bold text-lg">
-//               E
-//             </div>
-//             <span className="text-xl font-bold">Elevora</span>
-//           </Link>
-
-//           {/* <!-- Navigation --> */}
-//           <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
-//             <Link
-//               to="/"
-//               className="text-white hover:text-indigo-400 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-md px-2 py-1 -ml-2 -mt-1"
-//             >
-//               Home
-//             </Link>
-//             <Link to="/hero" className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-md px-2 py-1 -ml-2 -mt-1">
-//               Shop
-//             </Link>
-//             <Link to="/collections" className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-md px-2 py-1 -ml-2 -mt-1">
-//               Collections
-//             </Link>
-//             <Link to="/new-arrivals" className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-md px-2 py-1 -ml-2 -mt-1">
-//               New Arrivals
-//             </Link>
-//             <Link to="/deals" className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-md px-2 py-1 -ml-2 -mt-1">
-//               Deals
-//             </Link>
-//           </div>
-
-//           {/* <!-- Actions --> */}
-//           <div className="flex items-center gap-3 relative">
-//             <label className="input outline-none rounded-2xl bg-transparent border-none relative">
-//               <svg
-//                 className="h-[1em] opacity-50 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-//                 xmlns="http://www.w3.org/2000/svg"
-//                 viewBox="0 0 24 24"
-//                 aria-hidden="true"
-//               >
-//                 <g
-//                   strokeLinejoin="round"
-//                   strokeLinecap="round"
-//                   strokeWidth="2.5"
-//                   fill="none"
-//                   stroke="currentColor"
-//                 >
-//                   <circle cx="11" cy="11" r="8"></circle>
-//                   <path d="m21 21-4.3-4.3"></path>
-//                 </g>
-//               </svg>
-//               <input
-//                 ref={inputRef}
-//                 type="search"
-//                 required
-//                 placeholder="Search products..."
-//                 value={searchQuery}
-//                 onChange={handleInputChange}
-//                 onFocus={handleInputFocus}
-//                 onKeyDown={handleKeyDown}
-//                 className="bg-transparent outline-none pl-10 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-xl"
-//                 aria-autocomplete="list"
-//                 aria-controls="search-suggestions"
-//                 aria-expanded={showSuggestions && filteredProducts.length > 0}
-//                 aria-label="Search products"
-//                 role="combobox"
-//               />
-
-//               {/* Dropdown Suggestions */}
-//               {showSuggestions && filteredProducts.length > 0 && (
-//                 <div
-//                   ref={dropdownRef}
-//                   id="search-suggestions"
-//                   role="listbox"
-//                   className="absolute left-0 right-0 top-full mt-2 bg-neutral-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in-0 zoom-in-95 duration-150"
-//                   aria-label="Search suggestions"
-//                 >
-//                   <ul className="py-2 max-h-60 overflow-y-auto" role="presentation">
-//                     {filteredProducts.map((product, index) => (
-//                       <li
-//                         key={product.id}
-//                         role="option"
-//                         aria-selected={index === highlightedIndex}
-//                         onClick={() => selectSuggestion(product)}
-//                         onMouseEnter={() => setHighlightedIndex(index)}
-//                         className={`flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition cursor-pointer ${
-//                           index === highlightedIndex ? "bg-white/10" : ""
-//                         }`}
-//                         id={`search-suggestion-${index}`}
-//                       >
-//                         <img
-//                           src={product.thumbnail}
-//                           alt=""
-//                           aria-hidden="true"
-//                           className="w-10 h-10 object-cover rounded-lg"
-//                         />
-//                         <div className="flex-1 min-w-0">
-//                           <p className="text-sm font-medium text-white truncate">
-//                             {product.title}
-//                           </p>
-//                           <p className="text-xs text-white/50 capitalize">
-//                             {product.category}
-//                           </p>
-//                         </div>
-//                         <span className="text-sm font-semibold text-white/70" aria-hidden="true">
-//                           ${product.price}
-//                         </span>
-//                       </li>
-//                     ))}
-//                   </ul>
-//                 </div>
-//               )}
-//             </label>
-
-//             <Link
-//               to="/wishlist"
-//               className="relative w-10 h-10 rounded-xl border border-white/10 hover:bg-white/10 transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
-//               aria-label={`Wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ""}`}
-//             >
-//               ♡
-//               {wishlistCount > 0 && (
-//                 <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-[10px] flex items-center justify-center" aria-hidden="true">
-//                   {wishlistCount > 99 ? "99+" : wishlistCount}
-//                 </span>
-//               )}
-//             </Link>
-
-//             <Link
-//               to="/cart"
-//               className="relative w-10 h-10 rounded-xl border border-white/10 hover:bg-white/10 transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
-//               aria-label={`Shopping cart${cartCount > 0 ? `, ${cartCount} items` : ""}`}
-//             >
-//               🛒
-//               {cartCount > 0 && (
-//                 <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-indigo-500 text-[10px] flex items-center justify-center" aria-hidden="true">
-//                   {cartCount > 99 ? "99+" : cartCount}
-//                 </span>
-//               )}
-//             </Link>
-
-//             <button className="hidden sm:block px-5 py-2.5 rounded-xl bg-white text-neutral-900 hover:bg-indigo-400 hover:text-white transition text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950">
-//               Account
-//             </button>
-
-//             <button
-//               className="md:hidden w-10 h-10 rounded-xl border border-white/10 hover:bg-white/10 transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
-//               aria-label={showMobileMenu ? "Close menu" : "Open menu"}
-//               aria-expanded={showMobileMenu}
-//               aria-controls="mobile-menu"
-//               onClick={() => setShowMobileMenu(!showMobileMenu)}
-//             >
-//               {showMobileMenu ? "✕" : "☰"}
-//             </button>
-//           </div>
-//         </div>
-//       </nav>
-//     </div>
-//   );
-// }
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "/context/useCart";
-import { useWishlist } from "/context/useWishlist";
+import { useCart } from "../context/useCart";
+import { useWishlist } from "../context/useWishlist";
+import { Product } from "../types";
 
-export default function Navbar({ searchQuery, onSearchChange, products = [] }) {
+export default function Navbar({ searchQuery, onSearchChange, products = [] }: { searchQuery: string; onSearchChange: (value: string) => void; products?: Product[] }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const inputRef = useRef(null);
-  const dropdownRef = useRef(null);
-  const mobileMenuRef = useRef(null);
-  const mobileSearchRef = useRef(null);
-  const mobileSearchInputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
 
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutside(event: MouseEvent) {
       if (
         mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target) &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
         event.target !== document.querySelector('[aria-controls="mobile-menu"]')
       ) {
         setShowMobileMenu(false);
@@ -393,10 +35,10 @@ export default function Navbar({ searchQuery, onSearchChange, products = [] }) {
   // Closes the mobile search bar when tapping outside it (mirrors the mobile menu's
   // outside-click behavior above).
   useEffect(() => {
-    function handleClickOutsideMobileSearch(event) {
+    function handleClickOutsideMobileSearch(event: MouseEvent) {
       if (
         mobileSearchRef.current &&
-        !mobileSearchRef.current.contains(event.target) &&
+        !mobileSearchRef.current.contains(event.target as Node) &&
         event.target !==
           document.querySelector('[aria-controls="mobile-search"]')
       ) {
@@ -419,19 +61,19 @@ export default function Navbar({ searchQuery, onSearchChange, products = [] }) {
 
   const filteredProducts = products
     .filter(
-      (p) =>
+      (p: Product) =>
         p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.category.toLowerCase().includes(searchQuery.toLowerCase()),
     )
     .slice(0, 5);
 
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutside(event: MouseEvent) {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target) &&
+        !dropdownRef.current.contains(event.target as Node) &&
         inputRef.current &&
-        !inputRef.current.contains(event.target)
+        !inputRef.current.contains(event.target as Node)
       ) {
         setShowSuggestions(false);
         setHighlightedIndex(-1);
@@ -441,7 +83,7 @@ export default function Navbar({ searchQuery, onSearchChange, products = [] }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showSuggestions || filteredProducts.length === 0) {
       if (e.key === "Escape") {
         setShowSuggestions(false);
@@ -484,7 +126,7 @@ export default function Navbar({ searchQuery, onSearchChange, products = [] }) {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     onSearchChange(value);
     if (value.trim() && filteredProducts.length > 0) {
@@ -496,14 +138,14 @@ export default function Navbar({ searchQuery, onSearchChange, products = [] }) {
     }
   };
 
-  const selectSuggestion = (product) => {
+  const selectSuggestion = (product: Product) => {
     navigate(`/product/${product.id}`);
     setShowSuggestions(false);
     setHighlightedIndex(-1);
     inputRef.current?.focus();
   };
 
-  const selectMobileSuggestion = (product) => {
+  const selectMobileSuggestion = (product: Product) => {
     navigate(`/product/${product.id}`);
     setShowSuggestions(false);
     setHighlightedIndex(-1);

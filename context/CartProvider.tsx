@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { CartContext } from "./CartContext";
+import { CartContextValue } from "./CartContextValue";
+import { CartItem, Product } from "../types";
 
-export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState(() => {
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
       const stored = localStorage.getItem("elevora-cart");
       return stored ? JSON.parse(stored) : [];
@@ -15,7 +17,7 @@ export function CartProvider({ children }) {
     localStorage.setItem("elevora-cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = useCallback((product, quantity = 1) => {
+  const addToCart = useCallback((product: Product, quantity = 1) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
@@ -29,11 +31,11 @@ export function CartProvider({ children }) {
     });
   }, []);
 
-  const removeFromCart = useCallback((productId) => {
+  const removeFromCart = useCallback((productId: number) => {
     setCartItems((prev) => prev.filter((item) => item.id !== productId));
   }, []);
 
-  const updateQuantity = useCallback((productId, quantity) => {
+  const updateQuantity = useCallback((productId: number, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(productId);
       return;
@@ -58,19 +60,19 @@ export function CartProvider({ children }) {
 
   const total = subtotal;
 
+  const value: CartContextValue = {
+    cartItems,
+    cartCount,
+    subtotal,
+    total,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+  };
+
   return (
-    <CartContext.Provider
-      value={{
-        cartItems,
-        cartCount,
-        subtotal,
-        total,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-      }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

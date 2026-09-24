@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
 
+interface OrderConfirmationProps {
+  orderId?: string;
+  estimatedDelivery?: string;
+  backToPath?: string;
+  children?: React.ReactNode;
+}
+
 export default function OrderConfirmation({
   orderId,
   estimatedDelivery,
   backToPath = "/hero",
   children,
-}) {
+}: OrderConfirmationProps) {
   const hasDetails = Boolean(orderId) || Boolean(estimatedDelivery);
 
   return (

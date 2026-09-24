@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "/context/useCart";
-import Navbar from "/components/Navbar";
-import Footer from "/components/Footer";
-import OrderConfirmation from "/components/OrderConfirmation";
+import { useCart } from "../context/useCart";
+import { CartItem } from "../types";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import OrderConfirmation from "../components/OrderConfirmation";
 
 const initialFormState = {
   firstName: "",
@@ -27,16 +28,16 @@ const paymentMethods = [
 
 export default function CheckoutPage() {
   const { cartItems, subtotal, clearCart } = useCart();
-  const [formData, setFormData] = useState(initialFormState);
-  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState<typeof initialFormState>(initialFormState);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState("form");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderDetails, setOrderDetails] = useState({
     orderId: "",
     estimatedDelivery: "",
   });
-  const [placedItems, setPlacedItems] = useState([]);
-  const dialogRef = useRef(null);
+  const [placedItems, setPlacedItems] = useState<CartItem[]>([]);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const tax = subtotal * 0.1;
   const grandTotal = subtotal + tax;
@@ -109,7 +110,7 @@ export default function CheckoutPage() {
     );
   }
 
-  const validateField = (name, value) => {
+  const validateField = (name: string, value: string) => {
     switch (name) {
       case "firstName":
       case "lastName":
@@ -145,23 +146,23 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
     const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
     let isValid = true;
-    Object.keys(formData).forEach((key) => {
+    (Object.keys(formData) as Array<keyof typeof initialFormState>).forEach((key) => {
       const error = validateField(key, formData[key]);
       if (error) {
         newErrors[key] = error;
@@ -172,7 +173,7 @@ export default function CheckoutPage() {
     return isValid;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -193,12 +194,12 @@ export default function CheckoutPage() {
     setStep("success");
   };
 
-  const formatCardNumber = (value) => {
+  const formatCardNumber = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 16);
     return digits.replace(/(.{4})/g, "$1 ").trim();
   };
 
-  const formatExpiry = (value) => {
+  const formatExpiry = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 4);
     return digits.length > 2
       ? `${digits.slice(0, 2)}/${digits.slice(2)}`

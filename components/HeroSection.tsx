@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import Products from "/components/FetchingData";
-import Navbar from "/components/Navbar";
-import Footer from "/components/Footer";
+import Products from "../components/FetchingData";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { Product } from "../types";
 
 const baseUrl = "https://dummyjson.com/products/";
 
@@ -54,9 +55,9 @@ function ProductSkeleton() {
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -106,7 +107,6 @@ export default function HeroSection() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         products={products}
-        className="w-full border-b border-white/10 bg-neutral-950/90 backdrop-blur-xl sticky top-0 z-50"
       />
       <div className="hero-section min-h-150 flex items-center bg-neutral-950 text-white px-6 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">

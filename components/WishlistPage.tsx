@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { useCart } from "/context/useCart";
-import { useWishlist } from "/context/useWishlist";
-import Navbar from "/components/Navbar";
-import Footer from "/components/Footer";
+import { useCart } from "../context/useCart";
+import { useWishlist } from "../context/useWishlist";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function WishlistPage() {
   const { wishlistItems, wishlistCount, removeFromWishlist, clearWishlist } = useWishlist();

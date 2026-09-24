@@ -1,11 +1,11 @@
-"use client";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "/context/useCart";
-import { useWishlist } from "/context/useWishlist";
+import { useCart } from "../context/useCart";
+import { useWishlist } from "../context/useWishlist";
 import { FiShoppingCart } from "react-icons/fi";
+import { Product } from "../types";
 
-function ProductSkeleton({ count = 4 }) {
+function ProductSkeleton({ count = 4 }: { count?: number }) {
   return (
     <div
       className="flex flex-wrap gap-4 justify-center mt-10"
@@ -52,7 +52,7 @@ function ProductSkeleton({ count = 4 }) {
   );
 }
 
-function EmptyState({ searchQuery }) {
+function EmptyState({ searchQuery }: { searchQuery: string }) {
   return (
     <div className="w-full text-center py-16" role="status">
       <div className="text-6xl mb-4" aria-hidden="true">
@@ -84,7 +84,7 @@ export default function FetchingData({
   searchQuery = "",
   products = [],
   isLoading = false,
-}) {
+}: { searchQuery?: string; products?: Product[]; isLoading?: boolean }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const filteredProducts = useMemo(() => {
@@ -204,73 +204,4 @@ export default function FetchingData({
       })}
     </div>
   );
-}
-{
-  /* <div key={item.id} className="w-full h-full min-h-52" role="listitem">
-            <div className="card bg-neutral-900 border border-white/10 shadow-sm hover:border-indigo-500/50 transition relative">
-              <Link
-                to={`/product/${item.id}`}
-                className="block focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-xl"
-              >
-                <figure className="p-2 sm:px-10 sm:pt-10 relative">
-                  <img
-                    src={item.thumbnail}
-                    alt={`${item.title} - ${item.category} product`}
-                    className="w-fit h-30 sm:h-48 object-cover"
-                    loading="lazy"
-                  />
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      toggleWishlist(item);
-                    }}
-                    className={`absolute top-2 right-2 w-7 h-7 sm:top-4 sm:right-4 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center justify-center text-sm sm:text-xl ${
-                      inWishlist ? "text-red-400" : "text-white/50"
-                    } focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950`}
-                    aria-label={
-                      inWishlist
-                        ? `Remove ${item.title} from wishlist`
-                        : `Add ${item.title} to wishlist`
-                    }
-                    aria-pressed={inWishlist}
-                  >
-                    {inWishlist ? "♥" : "♡"}
-                  </button>
-                </figure>
-              </Link>
-              <div className="card-body items-center text-center p-3 sm:p-6">
-                <Link
-                  to={`/product/${item.id}`}
-                  className="block focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded-lg"
-                >
-                  <h2 className="card-title text-white sm:text-sm lg:text-base line-clamp-1">
-                    {item.title}
-                  </h2>
-                  <p className="text-white/50 line-clamp-1 sm:line-clamp-2">
-                    {item.description}
-                  </p>
-                </Link>
-                <div className="card-actions mt-4 flex flex-row gap-2 w-full justify-center item-center sm:justify-between">
-                  <Link
-                    to={`/product/${item.id}`}
-                    className="bg-zinc-700 p-3 flex flex-1 rounded-full justify-center items-center sm:line-clamp-1 lg:font-semibold focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-neutral-950"
-                  >
-                    View Details
-                  </Link>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      addToCart(item, 1);
-                    }}
-                    className="flex items-center p-4 rounded-full bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-neutral-950"
-                    aria-label={`Add ${item.title} to cart`}
-                  >
-                    <FiShoppingCart />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div> */
 }

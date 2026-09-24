@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import Navbar from "/components/Navbar";
-import Footer from "/components/Footer";
-import { useCart } from "/context/useCart";
-import { useWishlist } from "/context/useWishlist";
+import { useCart } from "../context/useCart";
+import { useWishlist } from "../context/useWishlist";
+import { Product } from "../types";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const baseUrl = "https://dummyjson.com/products/";
 
@@ -32,9 +33,9 @@ function ProductSkeleton() {
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const { addToCart } = useCart();
@@ -81,7 +82,9 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    if (product) {
+      addToCart(product, quantity);
+    }
   };
 
   if (loading) {
@@ -332,14 +335,14 @@ export default function ProductDetail() {
             <nav className="flex gap-8" aria-label="Product details" role="tablist">
               <button role="tab" aria-selected="true" className="pb-4 border-b-2 border-indigo-500 text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded">Description</button>
               <button role="tab" aria-selected="false" className="pb-4 border-b-2 border-transparent text-white/50 hover:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded">Specifications</button>
-              <button role="tab" aria-selected="false" className="pb-4 border-b-2 border-transparent text-white/50 hover:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded">Reviews ({product.reviewCount || 120})</button>
-              <button role="tab" aria-selected="false" className="pb-4 border-b-2 border-transparent text-white/50 hover:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded">Shipping</button>
+              <button role="tab" aria-selected={false} className="pb-4 border-b-2 border-transparent text-white/50 hover:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded">Reviews ({product.reviewCount || 120})</button>
+              <button role="tab" aria-selected={false} className="pb-4 border-b-2 border-transparent text-white/50 hover:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950 rounded">Shipping</button>
             </nav>
           </div>
 
           <div className="prose prose-invert max-w-none">
             <p className="text-white/60 leading-relaxed">{product.description}</p>
-            
+
             {product.tags?.length && (
               <div className="mt-8">
                 <h3 className="text-lg font-semibold mb-4">Features</h3>

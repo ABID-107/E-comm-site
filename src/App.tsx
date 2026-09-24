@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import LandingPage from "/components/LandingPage";
-import HeroSection from "/components/HeroSection";
-import ProductDetail from "/components/ProductDetail";
-import CartPage from "/components/CartPage";
-import CheckoutPage from "/components/CheckoutPage";
-import OrderConfirmation from "/components/OrderConfirmation";
-import WishlistPage from "/components/WishlistPage";
+import LandingPage from "../components/LandingPage";
+import HeroSection from "../components/HeroSection";
+import ProductDetail from "../components/ProductDetail";
+import CartPage from "../components/CartPage";
+import CheckoutPage from "../components/CheckoutPage";
+import OrderConfirmation from "../components/OrderConfirmation";
+import WishlistPage from "../components/WishlistPage";
 
 function App() {
   return (
