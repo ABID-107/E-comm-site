@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/useCart";
-import { CartItem } from "../types";
+import { CartItem, BuyNowItem } from "../types";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import OrderConfirmation from "../components/OrderConfirmation";
@@ -27,7 +27,20 @@ const paymentMethods = [
 ];
 
 export default function CheckoutPage() {
-  const { cartItems, subtotal, clearCart } = useCart();
+  const { cartItems, clearCart } = useCart();
+  const location = useLocation();
+  const buyNowItem = (location.state as { buyNowItem?: BuyNowItem })?.buyNowItem;
+  const isBuyNow = Boolean(buyNowItem);
+
+  // In Buy Now mode we check out only the single item; otherwise the cart.
+  const orderItems: CartItem[] = isBuyNow
+    ? [{ ...buyNowItem } as CartItem]
+    : cartItems;
+  const subtotal = orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
   const [formData, setFormData] = useState<typeof initialFormState>(initialFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState("form");
@@ -180,8 +193,12 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSubmitting(false);
-    setPlacedItems(cartItems);
-    clearCart();
+    setPlacedItems(orderItems);
+    // Only clear the cart when checking out the actual cart — a Buy Now order
+    // never touched the cart, so it must be left intact.
+    if (!isBuyNow) {
+      clearCart();
+    }
     const deliveryDate = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000);
     setOrderDetails({
       orderId: `ORD-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
@@ -633,7 +650,7 @@ export default function CheckoutPage() {
                 role="list"
                 aria-label="Order items"
               >
-                {cartItems.map((item) => (
+                {orderItems.map((item) => (
                   <div key={item.id} className="flex gap-3" role="listitem">
                     <img
                       src={item.thumbnail}

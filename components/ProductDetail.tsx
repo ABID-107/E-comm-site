@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import { useWishlist } from "../context/useWishlist";
 import { Product } from "../types";
@@ -33,6 +33,7 @@ function ProductSkeleton() {
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,6 +85,12 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (product) {
       addToCart(product, quantity);
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (product) {
+      navigate("/checkout", { state: { buyNowItem: { ...product, quantity } } });
     }
   };
 
@@ -268,7 +275,10 @@ export default function ProductDetail() {
                 </svg>
                 Add to Cart
               </button>
-              <button className="flex-1 px-8 py-4 border border-white/10 hover:bg-white/5 rounded-xl font-semibold text-lg transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950">
+              <button
+                onClick={handleBuyNow}
+                className="flex-1 px-8 py-4 border border-white/10 hover:bg-white/5 rounded-xl font-semibold text-lg transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+              >
                 Buy Now
               </button>
             </div>

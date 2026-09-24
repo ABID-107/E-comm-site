@@ -48,3 +48,6 @@ export interface Product {
 export interface CartItem extends Product {
   quantity: number;
 }
+
+/** A single item for the "Buy Now" flow — does not pollute the cart. */
+export type BuyNowItem = CartItem;
